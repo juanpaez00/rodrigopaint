@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+:root {
+  --rp-red: #e11414;
+  --rp-red-dark: #b00d0d;
+  --rp-black: #111111;
+}
+
+@theme inline {
+  --color-rp-red: var(--rp-red);
+  --color-rp-black: var(--rp-black);
+}
+
+html,
+body {
+  background: #f1f5f9;
+  color: #111827;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+/* Inputs base */
+.rp-input {
+  @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-rp-red focus:ring-2 focus:ring-red-100;
+}
+
+.rp-label {
+  @apply mb-1 block text-[11px] font-semibold uppercase tracking-wide text-gray-500;
+}
+
+.rp-card {
+  @apply rounded-2xl border border-gray-200 bg-white shadow-sm;
+}
+
+/* Oculta spinners de inputs numéricos */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}

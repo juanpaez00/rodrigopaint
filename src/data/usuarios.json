@@ -1,0 +1,10 @@
+{
+  "usuarios": [
+    {
+      "usuario": "rodrigo",
+      "clave": "rodrigopaint2026",
+      "nombre": "Rodrigo Paint",
+      "rolInspector": "Inspector Técnico"
+    }
+  ]
+}
