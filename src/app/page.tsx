@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { obtenerSesion, cerrarSesion } from "@/lib/session";
+import { guardarInforme } from "@/lib/saveInforme";
+import QRModal from "@/components/QRModal";
 import type { FormData, InspeccionItem, Usuario } from "@/lib/types";
 import {
   createEmptyForm,
@@ -29,6 +32,7 @@ export default function Home() {
   const [form, setForm] = useState<FormData>(createEmptyForm);
   const [generating, setGenerating] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
+  const [qrInfo, setQrInfo] = useState<{ orden: number; url: string } | null>(null);
 
   // Auth guard + carga de borrador (inicialización en mount: requiere localStorage)
   /* eslint-disable react-hooks/set-state-in-effect */
@@ -107,8 +111,23 @@ export default function Home() {
 
   async function handleGenerate() {
     setGenerating(true);
+    setSaveMsg("");
     try {
+      // 1. PDF en alta calidad (local). Si esto falla, no seguimos.
       await generarPdf(form);
+
+      // 2. Guardar en la web (número de orden + historial) y mostrar el QR.
+      //    Si falla, el PDF ya se descargó: avisamos sin bloquear.
+      try {
+        const { orden, url } = await guardarInforme(form);
+        setQrInfo({ orden, url });
+      } catch (err) {
+        setSaveMsg(
+          err instanceof Error
+            ? `⚠ ${err.message}`
+            : "⚠ No se pudo guardar el informe en la web."
+        );
+      }
     } catch (e) {
       console.error(e);
       alert("Ocurrió un error al generar el PDF. Revisá la consola.");
@@ -144,6 +163,12 @@ export default function Home() {
             <span className="hidden text-xs text-gray-300 sm:block">
               {usuario?.nombre}
             </span>
+            <Link
+              href="/historial"
+              className="rounded-lg border border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-200 transition hover:border-rp-red hover:text-white"
+            >
+              Historial
+            </Link>
             <button
               onClick={nuevoInforme}
               className="rounded-lg border border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-200 transition hover:border-rp-red hover:text-white"
@@ -519,6 +544,14 @@ export default function Home() {
           </button>
         </div>
       </div>
+
+      {qrInfo && (
+        <QRModal
+          orden={qrInfo.orden}
+          url={qrInfo.url}
+          onClose={() => setQrInfo(null)}
+        />
+      )}
     </div>
   );
 }

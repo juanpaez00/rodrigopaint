@@ -130,3 +130,28 @@ export interface Usuario {
   nombre: string;
   rolInspector: string;
 }
+
+// ── Persistencia en Redis ────────────────────────────────────────────────
+
+// Informe guardado: el formulario completo + metadatos de orden/fecha.
+export interface StoredInforme {
+  orden: number; // número de orden ascendente (1, 2, 3, …)
+  token: string; // identificador aleatorio usado en la URL pública
+  createdAt: string; // ISO timestamp de cuándo se guardó
+  data: FormData; // el informe completo (con fotos web-optimizadas)
+}
+
+// Entrada liviana del historial (sin fotos, para listar rápido).
+export interface InformeResumen {
+  orden: number;
+  token: string;
+  createdAt: string;
+  fecha: string;
+  cliente: string;
+  marcaModelo: string;
+  dominio: string;
+  anio: string;
+  total: number; // puntaje 0-40
+  etiqueta: string; // EXCELENTE / MUY BUENO / …
+  color: string;
+}
